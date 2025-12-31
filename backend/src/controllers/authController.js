@@ -14,7 +14,7 @@ export const googleLogin = async (req, res) => {
     const ADMIN_EMAILS = process.env.ADMIN_EMAILS
       ? process.env.ADMIN_EMAILS.split(",")
       : [];
-
+      
     // Verify Google token
     const ticket = await client.verifyIdToken({
       idToken: credential,
@@ -63,10 +63,15 @@ export const googleLogin = async (req, res) => {
 };
 
 export const logout = (req, res) => {
+  res.setHeader("Cache-Control", "no-store");
+
   res.clearCookie("admin_token", {
-  httpOnly: true,
-  secure: true,
-  sameSite: "none",
-});
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    domain: ".middleeastacademy.in",
+    path: "/",
+  });
+
   res.json({ message: "Logged out" });
 };

@@ -121,22 +121,28 @@ export const exportMessages = async (req, res) => {
 
 /* CREATE (PUBLIC – MAIN WEBSITE) */
 export const createMessage = async (req, res) => {
-  const { name, email, phone, message } = req.body;
+  try {
+    const { name, email, phone, message } = req.body;
 
-  if (!name || !message) {
-    return res.status(400).json({ message: "Required fields missing" });
+    if (!name || !message) {
+      return res.status(400).json({ message: "Required fields missing" });
+    }
+
+    await Message.create({
+      name,
+      email,
+      phone,
+      message,
+      source: "form",
+    });
+
+    res.status(201).json({ success: true });
+  } catch (err) {
+    console.error("Message save failed:", err);
+    res.status(500).json({ message: "Message not saved" });
   }
-
-  const newMessage = await Message.create({
-    name,
-    email,
-    phone,
-    message,
-    source: "form",
-  });
-
-  res.status(201).json({ success: true });
 };
+
 
 
 
